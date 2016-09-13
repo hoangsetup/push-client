@@ -106,7 +106,7 @@ sbz_subscriber.unsubscribe = function(callback) {
                     // We have a subscription, so call unsubscribe on it
                     pushSubscription.unsubscribe()
                     .then(function(successful) {
-                        callback(null);
+                        callback(null, successful);
                     })
                     .catch(function(err) {  
                         // We failed to unsubscribe, this can lead to

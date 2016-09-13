@@ -19,13 +19,16 @@ function toggleUi(flag) {
 }
 
 function showCurlPush(endpoint) {
+    if (!endpoint) {
+        return $('#endpointPush').val('');
+    }
     if (endpoint.indexOf('mozilla') > -1) {
         $('#endpointPush').val('curl -v -X POST ' + endpoint + ' -H "encryption-key: keyid=p256dh;dh=BPdbyNlxaH6zreGrZfHWtct8xVR9g1LjOagGsdyxllxT-BsWC5zFBlp4AsD4uXZ3kAA6zfqQPLoLxEklSI2muoU" -H "encryption: keyid=p256dh;salt=FD9bsatP7pGf6qeO_XVu_Q" -H "content-encoding: aesgcm128" -H "TTL:60" --data-binary @encrypted.data');
     } else {
         // Chrome
         var endpointParts = endpoint.split('/');
-        var registrationId = endpointParts[len(endpointParts) - 1];
-        $('#endpointPush').val('curl --header "Authorization: key=' + config.GCM_KEY + '" --header "Content-Type: application/json" https://android.googleapis.com/gcm/send -d "{\"registration_ids\":[\"'+ registrationId + '\"]}"');
+        var registrationId = endpointParts[endpointParts.length - 1];
+        $('#endpointPush').val('curl --header "Authorization: key=' + config.GCM_KEY + '" --header "Content-Type: application/json" https://android.googleapis.com/gcm/send -d "{\\\"registration_ids\\\":[\\\"'+ registrationId + '\\\"]}"');
     }
 }
 $(document).ready(function() {
@@ -43,6 +46,7 @@ $(document).ready(function() {
             log(data);
             isSub = true;
             toggleUi(isSub);
+            showCurlPush(data.endpoint);
         }
     });
 
@@ -55,8 +59,7 @@ $(document).ready(function() {
                 } else {
                     isSub = false;
                     toggleUi(isSub);
-                    var endpoint = data.endpoint;
-                    
+                    showCurlPush(false);
                 }
             });
         } else {
@@ -67,6 +70,7 @@ $(document).ready(function() {
                     isSub = true;
                     toggleUi(isSub);
                     log(data);
+                    showCurlPush(data.endpoint);
                 }
             });
         }
